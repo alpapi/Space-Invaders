@@ -11,14 +11,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameRunner extends ApplicationAdapter {
     SpaceShip ship;
+    EnemyShip enemy;
 	SpriteBatch batch;
+	Texture background;
 	int width;
 	int height;
+	int speed = 4; // Speed of the ship
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		ship = new SpaceShip();
+		enemy = new EnemyShip();
+		background = new Texture(Gdx.files.internal("spacebackground.jpg"));
 	}
 
 	@Override
@@ -32,19 +37,23 @@ public class GameRunner extends ApplicationAdapter {
         boolean isSPressed = Gdx.input.isKeyPressed(Input.Keys.S);
         boolean isDPressed = Gdx.input.isKeyPressed(Input.Keys.D);
 
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		/*Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);*/
+        batch.begin();
+        batch.draw(background, 0, 0);
+        batch.end();
 
 		ship.render(batch);
+		enemy.render(batch);
 
 		if(isWPressed)
-            ship.moveUp(1);
-		else if(isAPressed)
-		    ship.moveLeft(1);
-		else if(isSPressed)
-		    ship.moveDown(1);
-		else if(isDPressed)
-		    ship.moveRight(1);
+            ship.moveUp(speed);
+		if(isAPressed)
+		    ship.moveLeft(speed);
+		if(isSPressed)
+            ship.moveDown(speed);
+		if(isDPressed)
+		    ship.moveRight(speed);
 	}
 
 	@Override
@@ -53,6 +62,6 @@ public class GameRunner extends ApplicationAdapter {
 	}
 
     public void update(){
-
+            enemy.moveDown(speed);
     }
 }
