@@ -18,8 +18,9 @@ public class GameRunner extends ApplicationAdapter {
 	Texture background;
 	int width;
 	int height;
-	int speed = 4; // Speed of the ship
-    long startTime;
+	int enemySpeed = 3; // Speed of the enemy ship
+    int shipSpeed = 4; // Speed of the player ship
+    long startTime = startTime = System.currentTimeMillis();
     public final int TOP_OF_WINDOW = 580;
     ArrayList<EnemyShip> enemyList = new ArrayList<EnemyShip>();
 	
@@ -28,13 +29,6 @@ public class GameRunner extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		ship = new SpaceShip();
 		background = new Texture(Gdx.files.internal("spacebackground.jpg"));
-		startTime = System.currentTimeMillis();
-        Random rand = new Random();
-
-        for(int i = 0; i < 10; i++) {
-            int x = rand.nextInt(350);
-            enemyList.add(new EnemyShip(x));
-        }
 	}
 
 	@Override
@@ -57,20 +51,17 @@ public class GameRunner extends ApplicationAdapter {
         ship.render(batch);
 
         for(EnemyShip e : enemyList){
-            if(System.currentTimeMillis() - startTime >= 3000) {
                 e.render(batch);
-                startTime = System.currentTimeMillis();
-            }
         }
 
 		if(isWPressed)
-            ship.moveUp(speed);
+            ship.moveUp(shipSpeed);
 		if(isAPressed)
-		    ship.moveLeft(speed);
+		    ship.moveLeft(shipSpeed);
 		if(isSPressed)
-            ship.moveDown(speed);
+            ship.moveDown(shipSpeed);
 		if(isDPressed)
-		    ship.moveRight(speed);
+		    ship.moveRight(shipSpeed);
 	}
 
 	@Override
@@ -79,8 +70,15 @@ public class GameRunner extends ApplicationAdapter {
 	}
 
     public void update(){
+        Random rand = new Random();
+
+	    if(System.currentTimeMillis() - startTime >= 3000){
+                int x = rand.nextInt(350);
+                enemyList.add(new EnemyShip(x));
+        }
+
         for(int i = 0; i < enemyList.size(); i++){
-            enemyList.get(i).moveDown(speed);
+            enemyList.get(i).moveDown(enemySpeed);
 
             if(enemyList.get(i).getY() == -100)
                 enemyList.get(i).setY(TOP_OF_WINDOW);

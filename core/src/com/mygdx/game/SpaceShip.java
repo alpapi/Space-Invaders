@@ -12,7 +12,7 @@ public class SpaceShip {
 
     public SpaceShip(){
         this.vector = new Vector2();
-        ship = new Texture(Gdx.files.internal("spaceship.png"));
+        this.ship = new Texture(Gdx.files.internal("spaceship.png"));
     }
 
     public void render(SpriteBatch batch){
