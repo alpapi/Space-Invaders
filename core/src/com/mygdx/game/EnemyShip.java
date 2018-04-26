@@ -12,20 +12,14 @@ public class EnemyShip {
     private Vector2 position;
     private Texture enemy;
 
-    public EnemyShip(){
-        Random rand = new Random();
-        int pos = rand.nextInt(350);
-
+    public EnemyShip(int x){
         this.position = new Vector2();
         this.enemy = new Texture(Gdx.files.internal("enemyship.gif"));
-        position.x = pos;
+        position.x = x;
         position.y = 580;
     }
 
     public void render(SpriteBatch batch){
-        Random rand = new Random();
-        int pos = rand.nextInt(Gdx.graphics.getWidth());
-
         batch.begin();
         batch.draw(enemy, position.x, position.y);
         batch.end();

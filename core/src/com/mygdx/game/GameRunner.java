@@ -9,21 +9,32 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class GameRunner extends ApplicationAdapter {
     SpaceShip ship;
-    EnemyShip enemy;
 	SpriteBatch batch;
 	Texture background;
 	int width;
 	int height;
 	int speed = 4; // Speed of the ship
+    long startTime;
+    public final int TOP_OF_WINDOW = 580;
+    ArrayList<EnemyShip> enemyList = new ArrayList<EnemyShip>();
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		ship = new SpaceShip();
-		enemy = new EnemyShip();
 		background = new Texture(Gdx.files.internal("spacebackground.jpg"));
+		startTime = System.currentTimeMillis();
+        Random rand = new Random();
+
+        for(int i = 0; i < 10; i++) {
+            int x = rand.nextInt(350);
+            enemyList.add(new EnemyShip(x));
+        }
 	}
 
 	@Override
@@ -37,14 +48,20 @@ public class GameRunner extends ApplicationAdapter {
         boolean isSPressed = Gdx.input.isKeyPressed(Input.Keys.S);
         boolean isDPressed = Gdx.input.isKeyPressed(Input.Keys.D);
 
-		/*Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);*/
+		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(background, 0, 0);
         batch.end();
 
-		ship.render(batch);
-		enemy.render(batch);
+        ship.render(batch);
+
+        for(EnemyShip e : enemyList){
+            if(System.currentTimeMillis() - startTime >= 3000) {
+                e.render(batch);
+                startTime = System.currentTimeMillis();
+            }
+        }
 
 		if(isWPressed)
             ship.moveUp(speed);
@@ -62,6 +79,11 @@ public class GameRunner extends ApplicationAdapter {
 	}
 
     public void update(){
-            enemy.moveDown(speed);
+        for(int i = 0; i < enemyList.size(); i++){
+            enemyList.get(i).moveDown(speed);
+
+            if(enemyList.get(i).getY() == -100)
+                enemyList.get(i).setY(TOP_OF_WINDOW);
+        }
     }
 }
