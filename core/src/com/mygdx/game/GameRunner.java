@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,11 +38,6 @@ public class GameRunner extends ApplicationAdapter {
 		this.width = Gdx.graphics.getWidth();
 		this.height = Gdx.graphics.getHeight();
 
-        boolean isWPressed = Gdx.input.isKeyPressed(Input.Keys.W);
-        boolean isAPressed = Gdx.input.isKeyPressed(Input.Keys.A);
-        boolean isSPressed = Gdx.input.isKeyPressed(Input.Keys.S);
-        boolean isDPressed = Gdx.input.isKeyPressed(Input.Keys.D);
-
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -53,15 +49,6 @@ public class GameRunner extends ApplicationAdapter {
         for(EnemyShip e : enemyList){
                 e.render(batch);
         }
-
-		if(isWPressed)
-            ship.moveUp(shipSpeed);
-		if(isAPressed)
-		    ship.moveLeft(shipSpeed);
-		if(isSPressed)
-            ship.moveDown(shipSpeed);
-		if(isDPressed)
-		    ship.moveRight(shipSpeed);
 	}
 
 	@Override
@@ -72,9 +59,10 @@ public class GameRunner extends ApplicationAdapter {
     public void update(){
         Random rand = new Random();
 
-	    if(System.currentTimeMillis() - startTime >= 3000){
-                int x = rand.nextInt(350);
+	    if(System.currentTimeMillis() - startTime >= 3000){ // Algorithm
+                int x = rand.nextInt(320);
                 enemyList.add(new EnemyShip(x));
+                startTime = System.currentTimeMillis();
         }
 
         for(int i = 0; i < enemyList.size(); i++){
@@ -82,6 +70,24 @@ public class GameRunner extends ApplicationAdapter {
 
             if(enemyList.get(i).getY() == -100)
                 enemyList.get(i).setY(TOP_OF_WINDOW);
+        }
+
+        boolean isAPressed = Gdx.input.isKeyPressed(Input.Keys.A);
+        boolean isDPressed = Gdx.input.isKeyPressed(Input.Keys.D);
+
+        if(isAPressed)
+            ship.moveLeft(shipSpeed);
+        if(isDPressed)
+            ship.moveRight(shipSpeed);
+
+        Random randPos = new Random();
+
+        for(int i = 0; i < enemyList.size(); i++) {
+            int randX = randPos.nextInt(320);
+            if (ship.getBoundingBox().overlaps(enemyList.get(i).getBoundingBox())) {
+                enemyList.get(i).setY(640);
+                enemyList.get(i).setX(randX);
+            }
         }
     }
 }

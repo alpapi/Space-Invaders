@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
@@ -37,4 +38,13 @@ public class EnemyShip {
 
     public void setX(int amount){ position.x = amount; }
 
+    public Rectangle getBoundingBox(){
+        Rectangle enemyRect = new Rectangle();
+        enemyRect.x = position.x;
+        enemyRect.y = position.y;
+        enemyRect.width = enemy.getWidth();
+        enemyRect.height = enemy.getHeight();
+
+        return enemyRect;
+    }
 }

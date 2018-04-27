@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class SpaceShip {
@@ -29,6 +30,8 @@ public class SpaceShip {
         return vector.y;
     }
 
+    public void setY(int amount) {vector.y = amount;}
+
     public void moveRight(float amount){
         vector.x += amount;
     }
@@ -37,12 +40,14 @@ public class SpaceShip {
         vector.x -= amount;
     }
 
-    public void moveUp(float amount){
-        vector.y += amount;
-    }
+    public Rectangle getBoundingBox(){
+        Rectangle shipRect = new Rectangle();
+        shipRect.x = vector.x;
+        shipRect.y = vector.y;
+        shipRect.width = ship.getWidth();
+        shipRect.height = ship.getHeight();
 
-    public void moveDown(float amount){
-        vector.y -= amount;
+        return shipRect;
     }
 
 }
