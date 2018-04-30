@@ -19,12 +19,16 @@ public class GameRunner extends ApplicationAdapter {
 	Texture background;
 	int width;
 	int height;
-	int enemySpeed = 3; // Speed of the enemy ship
+	int enemySpeed = 2; // Speed of the enemy ship
     int shipSpeed = 4; // Speed of the player ship
     long startTime = startTime = System.currentTimeMillis();
+    long bulletStartTime = System.currentTimeMillis();
     public final int TOP_OF_WINDOW = 580;
+
     ArrayList<EnemyShip> enemyList = new ArrayList<EnemyShip>();
-	
+
+    ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -49,6 +53,10 @@ public class GameRunner extends ApplicationAdapter {
         for(EnemyShip e : enemyList){
                 e.render(batch);
         }
+
+        for(Bullet b : bulletList){
+            b.render(batch);
+        }
 	}
 
 	@Override
@@ -59,7 +67,7 @@ public class GameRunner extends ApplicationAdapter {
     public void update(){
         Random rand = new Random();
 
-	    if(System.currentTimeMillis() - startTime >= 3000){ // Algorithm
+	    if(System.currentTimeMillis() - startTime >= 1500){ // Algorithm
                 int x = rand.nextInt(320);
                 enemyList.add(new EnemyShip(x));
                 startTime = System.currentTimeMillis();
@@ -72,21 +80,42 @@ public class GameRunner extends ApplicationAdapter {
                 enemyList.get(i).setY(TOP_OF_WINDOW);
         }
 
+        for (int i = 0; i < bulletList.size(); i++) {
+	        bulletList.get(i).moveUp();
+
+	        for(int j = 0; j < enemyList.size(); j++){
+	            if(enemyList.get(j).getBoundingBox().overlaps(bulletList.get(i).getBoundingBox())){
+	                enemyList.remove(j);
+	                bulletList.remove(i);
+	                break;
+                }
+            }
+        }
+
         boolean isAPressed = Gdx.input.isKeyPressed(Input.Keys.A);
         boolean isDPressed = Gdx.input.isKeyPressed(Input.Keys.D);
+        boolean isSpacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         if(isAPressed)
             ship.moveLeft(shipSpeed);
         if(isDPressed)
             ship.moveRight(shipSpeed);
+        if(isSpacePressed && System.currentTimeMillis() - bulletStartTime >= 750){
+            Bullet bullet = new Bullet(4);
+            bullet.setY(ship.getY() + 40);
+            bullet.setX(ship.getX() + 40);
+            bulletList.add(bullet);
+            bulletStartTime = System.currentTimeMillis();
+        }
 
         Random randPos = new Random();
 
-        for(int i = 0; i < enemyList.size(); i++) {
+        for(EnemyShip e : enemyList) {
             int randX = randPos.nextInt(320);
-            if (ship.getBoundingBox().overlaps(enemyList.get(i).getBoundingBox())) {
-                enemyList.get(i).setY(640);
-                enemyList.get(i).setX(randX);
+
+            if (ship.getBoundingBox().overlaps(e.getBoundingBox())) {
+                e.setX(randX);
+                e.setY(640);
             }
         }
     }
